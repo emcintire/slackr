@@ -1,0 +1,23 @@
+************* Module H16A-table_flip.server.message_sendlater
+server/message_sendlater.py:7:0: R1710: Either all return statements in a function should return an expression, or none of them should. (inconsistent-return-statements)
+************* Module H16A-table_flip.server.user_profiles_uploadphoto
+server/user_profiles_uploadphoto.py:9:0: R0913: Too many arguments (6/5) (too-many-arguments)
+server/user_profiles_uploadphoto.py:9:0: R0914: Too many local variables (16/15) (too-many-locals)
+server/user_profiles_uploadphoto.py:9:0: R0912: Too many branches (13/12) (too-many-branches)
+************* Module H16A-table_flip.server.standup_active
+server/standup_active.py:13:16: R1705: Unnecessary "else" after "return" (no-else-return)
+************* Module H16A-table_flip.server.channel_messages
+server/channel_messages.py:7:4: R1702: Too many nested blocks (7/5) (too-many-nested-blocks)
+server/channel_messages.py:22:16: R1705: Unnecessary "else" after "return" (no-else-return)
+************* Module H16A-table_flip.server.search
+server/search.py:7:4: R1702: Too many nested blocks (6/5) (too-many-nested-blocks)
+************* Module H16A-table_flip.server.auth_register
+server/auth_register.py:9:0: R0912: Too many branches (15/12) (too-many-branches)
+************* Module H16A-table_flip.server.channel_messages_test
+server/channel_messages_test.py:38:8: W0612: Unused variable 'i' (unused-variable)
+************* Module H16A-table_flip.server.http_test
+server/http_test.py:7:0: R0915: Too many statements (169/50) (too-many-statements)
+
+------------------------------------------------------------------
+Your code has been rated at 9.96/10 (previous run: 9.92/10, +0.04)
+
