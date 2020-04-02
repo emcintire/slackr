@@ -1,6 +1,6 @@
 # COMP1531 Major Project
 
-A video describing this project and the background here can be found here.
+Slackr Messaging App
 
 ## Aims:
 
