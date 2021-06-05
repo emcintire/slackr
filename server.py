@@ -48,6 +48,7 @@ from server.user_profiles_uploadphoto import user_profiles_uploadphoto
 from server.auth_register import auth_register
 from server.error import ValueError, AccessError
 
+
 def defaultHandler(err):
     response = err.get_response()
     response.data = dumps({
@@ -59,14 +60,14 @@ def defaultHandler(err):
     return response
 
 
-APP = Flask(__name__, static_url_path = '/static/')
+APP = Flask(__name__, static_url_path='/static/')
 CORS(APP)
 APP.config.update(
-    MAIL_SERVER = 'smtp.gmail.com',
-    MAIL_PORT = 465,
-    MAIL_USE_SSL = True,
-    MAIL_USERNAME = 'comp1531tableflip@gmail.com',
-    MAIL_PASSWORD = "comp1531"
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT=465,
+    MAIL_USE_SSL=True,
+    MAIL_USERNAME='comp1531tableflip@gmail.com',
+    MAIL_PASSWORD="comp1531"
 )
 APP.config['TRAP_HTTP_EXCEPTIONS'] = True
 APP.register_error_handler(Exception, defaultHandler)
@@ -75,19 +76,22 @@ APP.register_error_handler(Exception, defaultHandler)
 #auth_register("bchenyoung@gmail.com", "abc123", "Bill", "Chenyoung")
 #auth_register("kappa@gmail.com", "abc123", "abcd", "efgh")
 
+
 @APP.route('/echo/get', methods=['GET'])
 def echo1():
     """ HTTP Request Echo GET: Returns the input """
     return dumps({
-        'echo' : request.args.get('echo'),
+        'echo': request.args.get('echo'),
     })
+
 
 @APP.route('/echo/post', methods=['POST'])
 def echo2():
     """ HTTP Request Echo POST: Returns the input """
     return dumps({
-        'echo' : request.form.get('echo'),
+        'echo': request.form.get('echo'),
     })
+
 
 @APP.route('/auth/login', methods=['POST'])
 def authlogin():
@@ -101,13 +105,15 @@ def authlogin():
     except ValueError as e:
         raise e
 
+
 @APP.route('/auth/logout', methods=['POST'])
 def authlogout():
     """ Given an active token, invalidates the taken to log the user out. If a valid token is given, and the user is successfully logged out, it returns true, otherwise false. """
     token = request.form.get('token')
     return dumps(auth_logout(token))
 
-@APP.route('/auth/register', methods=['POST']) #do this first
+
+@APP.route('/auth/register', methods=['POST'])  # do this first
 def authregister():
     """ Given a user's first and last name, email address, and password, create a new account for them and return a new token for authentication in their session. A handle is generated that is the concatentation of a lowercase-only first name and last name. If the handle is already taken, a number is added to the end of the handle to make it unique. """
     email = request.form.get('email')
@@ -123,13 +129,14 @@ def authregister():
     # Save the registered user...
     try:
         return dumps({
-            'u_id' : u_id,
-            'token' : token
+            'u_id': u_id,
+            'token': token
         })
     except ValueError as e:
         raise e
-    except AccessError as e:
-        raise e
+    # except AccessError as e:
+    #     raise e
+
 
 @APP.route('/auth/passwordreset/request', methods=['POST'])
 def authpasswordresetrequest():
@@ -144,7 +151,8 @@ def authpasswordresetrequest():
         email = request.form.get('email')
         auth_passwordreset_request(email)
         reset_num = reset_codes[len(reset_codes) - 1]['reset_code']
-        msg = Message("You're Password Reset Code", sender = "comp1531tableflip@gmail.com", recipients=[email])
+        msg = Message("You're Password Reset Code",
+                      sender="comp1531tableflip@gmail.com", recipients=[email])
         msg.body = "You're password reset code is " + str(reset_num)
         mail.send(msg)
         return dumps({})
@@ -152,6 +160,7 @@ def authpasswordresetrequest():
         raise e
     except AccessError as e:
         raise e
+
 
 @APP.route('/auth/passwordreset/reset', methods=['POST'])
 def authpasswordresetrequestreset():
@@ -167,7 +176,8 @@ def authpasswordresetrequestreset():
     except AccessError as e:
         raise e
 
-@APP.route('/channels/create', methods = ['POST'])
+
+@APP.route('/channels/create', methods=['POST'])
 def channelsCreate():
     '''Creates channel with a name that is public or private'''
 
@@ -175,7 +185,7 @@ def channelsCreate():
     name = request.form.get('name')
     is_public = request.form.get('is_public')
 
-    #Generating channel_id
+    # Generating channel_id
     channel_id = channels_create(token, name, is_public)
     try:
         return dumps({
@@ -186,7 +196,8 @@ def channelsCreate():
     except AccessError as e:
         raise e
 
-@APP.route('/channel/details', methods = ['GET'])
+
+@APP.route('/channel/details', methods=['GET'])
 def channelDetails():
     '''Given a Channel with ID channel_id that the authorised user
     is part of, provide basic details about the channel'''
@@ -200,7 +211,8 @@ def channelDetails():
     except AccessError as e:
         raise e
 
-@APP.route('/channels/list', methods = ['GET'])
+
+@APP.route('/channels/list', methods=['GET'])
 def channelsList():
     '''Provide a list of all channels (and their associated details)
     that the authorised user is part of'''
@@ -213,7 +225,8 @@ def channelsList():
     except AccessError as e:
         raise e
 
-@APP.route('/channels/listall', methods = ['GET'])
+
+@APP.route('/channels/listall', methods=['GET'])
 def channelsListAll():
     '''Provide a list of all channels (and their associated details)'''
 
@@ -226,7 +239,8 @@ def channelsListAll():
     except AccessError as e:
         raise e
 
-@APP.route('/channel/messages', methods = ['GET'])
+
+@APP.route('/channel/messages', methods=['GET'])
 def channelMessages():
     '''Given a Channel with ID channel_id that the authorised user is part of,
     return up to 50 messages between index "start" and "start + 50". Message
@@ -246,7 +260,8 @@ def channelMessages():
     except AccessError as e:
         raise e
 
-@APP.route('/channel/join', methods = ['POST'])
+
+@APP.route('/channel/join', methods=['POST'])
 def channelJoin():
     '''Given a channel_id of a channel that the authorised
     user can join, adds them to that channel'''
@@ -261,7 +276,8 @@ def channelJoin():
     except AccessError as e:
         raise e
 
-@APP.route('/channel/leave', methods = ['POST'])
+
+@APP.route('/channel/leave', methods=['POST'])
 def channelLeave():
     '''Given a channel ID, the user removed as a member of this channel'''
 
@@ -275,7 +291,7 @@ def channelLeave():
         raise e
 
 
-@APP.route('/user/profile', methods = ['GET'])
+@APP.route('/user/profile', methods=['GET'])
 def userProfile():
     '''For a valid user, returns information about
     their email, first name, last name, and handle'''
@@ -289,7 +305,8 @@ def userProfile():
     except AccessError as e:
         raise e
 
-@APP.route('/channel/addowner', methods = ['POST'])
+
+@APP.route('/channel/addowner', methods=['POST'])
 def channelAddOwner():
     '''Make user with user id u_id an owner of this channel'''
 
@@ -303,7 +320,8 @@ def channelAddOwner():
     except AccessError as e:
         raise e
 
-@APP.route('/channel/removeowner', methods = ['POST'])
+
+@APP.route('/channel/removeowner', methods=['POST'])
 def channelRemoveOwner():
     '''Make user with user id u_id an owner of this channel'''
 
@@ -318,7 +336,8 @@ def channelRemoveOwner():
     except AccessError as e:
         raise e
 
-@APP.route('/channel/invite', methods = ['POST'])
+
+@APP.route('/channel/invite', methods=['POST'])
 def channelInvite():
     '''Invites a user (with user id u_id) to join a channel with
     ID channel_id. Once invited the user is added to the channel immediately'''
@@ -334,7 +353,8 @@ def channelInvite():
     except AccessError as e:
         raise e
 
-@APP.route('/message/send', methods = ['POST'])
+
+@APP.route('/message/send', methods=['POST'])
 def messageSend():
     '''Send a message from authorised_user to the channel specified by channel_id'''
 
@@ -349,7 +369,8 @@ def messageSend():
     except AccessError as e:
         raise e
 
-@APP.route('/message/remove', methods = ['DELETE'])
+
+@APP.route('/message/remove', methods=['DELETE'])
 def messageRemove():
     '''Given a message_id for a message, this message is removed from the channel'''
 
@@ -363,7 +384,9 @@ def messageRemove():
     except AccessError as e:
         raise e
 
-@APP.route('/message/edit', methods = ['POST', 'PUT']) ######################## THIS IS PUT BUT FOR FRONTEND
+
+# THIS IS PUT BUT FOR FRONTEND
+@APP.route('/message/edit', methods=['POST', 'PUT'])
 def messageEdit():
     '''Given a message, update it's text with new text. If the new
     message is an empty string, the message is deleted.'''
@@ -379,7 +402,8 @@ def messageEdit():
     except AccessError as e:
         raise e
 
-@APP.route('/message/pin', methods = ['POST'])
+
+@APP.route('/message/pin', methods=['POST'])
 def messagePin():
     '''Given a message within a channel, mark it as "pinned"
     to be given special display treatment by the frontend'''
@@ -394,7 +418,8 @@ def messagePin():
     except AccessError as e:
         raise e
 
-@APP.route('/message/unpin', methods = ['POST'])
+
+@APP.route('/message/unpin', methods=['POST'])
 def messageUnpin():
     '''Given a message within a channel, remove it's mark as unpinned'''
 
@@ -408,7 +433,8 @@ def messageUnpin():
     except AccessError as e:
         raise e
 
-@APP.route('/message/react', methods = ['POST'])
+
+@APP.route('/message/react', methods=['POST'])
 def messageReact():
     '''Given a message within a channel the authorised user is part of,
     add a "react" to that particular message'''
@@ -424,7 +450,8 @@ def messageReact():
     except AccessError as e:
         raise e
 
-@APP.route('/message/unreact', methods = ['POST'])
+
+@APP.route('/message/unreact', methods=['POST'])
 def messageUnreact():
     '''Given a message within a channel the authorised user is
     part of, remove a "react" to that particular message'''
@@ -440,7 +467,8 @@ def messageUnreact():
     except AccessError as e:
         raise e
 
-@APP.route('/search',methods=['GET'])
+
+@APP.route('/search', methods=['GET'])
 def messageSearch():
     '''Given a query string, return a collection of messages
     in all of the channels that the user has joined that match the query'''
@@ -455,7 +483,8 @@ def messageSearch():
     except AccessError as e:
         raise e
 
-@APP.route('/admin/userpermission/change', methods = ['POST'])
+
+@APP.route('/admin/userpermission/change', methods=['POST'])
 def adminUserPermissionChange():
     '''Given a User by their user ID, set their permissions
     to new permissions described by permission_id'''
@@ -471,27 +500,30 @@ def adminUserPermissionChange():
     except AccessError as e:
         raise e
 
-@APP.route('/standup/start', methods = ['POST'])
+
+@APP.route('/standup/start', methods=['POST'])
 def standupStart():
     global start_time
     token = request.form.get('token')
     channel_id = request.form.get('channel_id')
     length = int(request.form.get('length'))
-    
-    u_id = jwt.decode(token.encode('utf-8'), 'table_flip', algorithms=['HS256'])['u_id']
+
+    u_id = jwt.decode(token.encode('utf-8'), 'table_flip',
+                      algorithms=['HS256'])['u_id']
     time_finish = datetime.now(timezone.utc).timestamp() + length
 
     try:
         standup_start(token, channel_id, length)
         t = threading.Timer(length, standup_finish, [int(channel_id), u_id])
         t.start()
-        return dumps({'time_finish':time_finish})
+        return dumps({'time_finish': time_finish})
     except ValueError as e:
         raise e
     except AccessError as e:
         raise e
 
-@APP.route('/standup/send', methods = ['POST'])
+
+@APP.route('/standup/send', methods=['POST'])
 def standupSend():
     '''Sending a message to get buffered in the standup
     queue, assuming a standup is currently active'''
@@ -501,7 +533,8 @@ def standupSend():
     channel_id = request.form.get('channel_id')
     message = request.form.get('message')
 
-    u_id = jwt.decode(token.encode('utf-8'), 'table_flip', algorithms=['HS256'])['u_id']
+    u_id = jwt.decode(token.encode('utf-8'), 'table_flip',
+                      algorithms=['HS256'])['u_id']
     for user in data:
         if user['u_id'] == u_id:
             name_first = user['name_first']
@@ -512,6 +545,7 @@ def standupSend():
         raise e
     except AccessError as e:
         raise e
+
 
 @APP.route('/standup/active', methods=['GET'])
 def standupActive():
@@ -525,7 +559,8 @@ def standupActive():
     except AccessError as e:
         raise e
 
-@APP.route('/message/sendlater', methods = ['POST'])
+
+@APP.route('/message/sendlater', methods=['POST'])
 def messageSendLater():
     '''Send a message from authorised_user to the channel specified
     by channel_id automatically at a specified time in the future'''
@@ -533,7 +568,7 @@ def messageSendLater():
     token = request.form.get('token')
     channel_id = request.form.get('channel_id')
     message = request.form.get('message')
-    time_sent = request.form.get('time_sent') #[:-5]
+    time_sent = request.form.get('time_sent')  # [:-5]
 
     try:
         return dumps(message_sendlater(token, channel_id, message, float(time_sent)))
@@ -542,7 +577,8 @@ def messageSendLater():
     except AccessError as e:
         raise e
 
-@APP.route('/user/profile/setname', methods = ['PUT'])
+
+@APP.route('/user/profile/setname', methods=['PUT'])
 def userSetName():
     '''Update the authorised user's first and last name'''
 
@@ -556,7 +592,8 @@ def userSetName():
     except AccessError as e:
         raise e
 
-@APP.route('/user/profile/setemail', methods = ['PUT'])
+
+@APP.route('/user/profile/setemail', methods=['PUT'])
 def userSetEmail():
     '''Update the authorised user's email address'''
 
@@ -569,7 +606,8 @@ def userSetEmail():
     except AccessError as e:
         raise e
 
-@APP.route('/user/profile/sethandle', methods = ['PUT'])
+
+@APP.route('/user/profile/sethandle', methods=['PUT'])
 def userSetHandle():
     '''Update the authorised user's handle (i.e. display name)'''
 
@@ -582,36 +620,40 @@ def userSetHandle():
     except AccessError as e:
         raise e
 
-@APP.route('/user/profiles/uploadphoto', methods = ['POST'])
+
+@APP.route('/user/profiles/uploadphoto', methods=['POST'])
 def userProfilesUploadPhoto():
-    token = request.form.get('token') 
+    token = request.form.get('token')
     img_url = request.form.get('img_url')
     x_start = int(request.form.get('x_start'))
     y_start = int(request.form.get('y_start'))
     x_end = int(request.form.get('x_end'))
     y_end = int(request.form.get('y_end'))
     setHostName(urlparse(request.base_url).netloc)
-   
+
     try:
         return dumps(user_profiles_uploadphoto(token, img_url, x_start, y_start, x_end, y_end))
     except ValueError as e:
         raise e
     except AccessError as e:
-        raise e 
+        raise e
+
 
 @APP.route('/static/<path:path>')
 def send_js(path):
     return send_from_directory('', path)
 
-@APP.route('/users/all', methods = ['GET'])
+
+@APP.route('/users/all', methods=['GET'])
 def usersAll():
-    token = request.args.get('token') 
+    token = request.args.get('token')
     try:
         return dumps(users_all(token))
     except ValueError as e:
         raise e
     except AccessError as e:
         raise e
+
 
 if __name__ == '__main__':
     APP.run(port=(sys.argv[1] if len(sys.argv) > 1 else 5000))
